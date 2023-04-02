@@ -1,44 +1,36 @@
 #ifndef CONNEXION_H
 #define CONNEXION_H
 
-#include "../inc/master.h"
+#include "../inc/master.h" //Include master header file.
 
 using namespace std;
-
 
 class Connexion
 {
     public:
+        Connexion(); //Default constructor.
 
-        Connexion(); 
-        
-        INT openConnexion(); //Connect serveur or re connect to server. 
+        INT openConnexion(); //Function to connect to the server or re-connect to the server.
 
-        //int main(bool is_admin, string path_prog); //Main function of client. #3
-        VOID setToken(wstring token); //set a_token
-        VOID setIsAdmin(BOOL is_admin);// set a_is_admin
-        VOID setPathProg(wstring path_prog); // set a_path_prog
-        INT setAutoPeristence(); //
+        VOID setToken(wstring token); //Function to set the token.
+        VOID setIsAdmin(BOOL is_admin);// Function to set whether the client is an admin or not.
+        VOID setPathProg(wstring path_prog); // Function to set the path to the program.
+        INT setAutoPeristence(); //Function to set automatic persistence.
 
+        INT main(); //Main function of the client.
+        VOID sendSafe(vector<string> result_of_command); //Function to send data and manage errors.
+        wstring recvSafe(); //Function to receive data and manage possible errors, and return result.
+        VOID checkSend(INT &iResult); //Function to check if the send operation was successful.
 
-        INT main(); //Main function of client. #3
-        VOID sendSafe(vector<string> result_of_command); //send data and manage errors
-        wstring recvSafe(); //receives the data and manages possible errors.  and return result
-        VOID checkSend(INT &iResult);
-        
-        VOID reConnect(); //re connection to the server in case of problem.
-        VOID closeConnexion(); //Close connexion.
+        VOID reConnect(); //Function to re-connect to the server in case of problems.
+        VOID closeConnexion(); //Function to close the connection.
 
-        SOCKET getSocket(); //Ghetter of socket.
-
+        SOCKET getSocket(); //Getter function for the socket.
 
     private:
-
-        SOCKET sock_client; 
-        wstring a_token;
-        BOOL a_is_admin;
-        wstring a_path_prog;
-
+        SOCKET sock_client; //The client socket.
+        wstring a_token; //The token.
+        BOOL a_is_admin; //Whether the client is an admin or not.
+        wstring a_path_prog; //The path to the program.
 };
 #endif
-

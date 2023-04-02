@@ -126,7 +126,7 @@ parser.add_argument("-r","--reconnect", dest="RECONNECT",default=20,  help="the 
 parser.add_argument("-n","--name", dest="NAME", default="RATel.exe", help="the name of the executable (of the rat)")
 parser.add_argument("-m","--move", dest="MOVE", default=False, help="Under development...")
 parser.add_argument("-rs","--registry", dest="REGISTRY_STRING", default="win64", help="the name of the value of the subkey of the windows registry.")
-parser.add_argument("-pa", "--password", dest="PASSWORD", default="CISCOTHEBOSS", help="The password to generate the key to encrypt and decrypt the data. The default password is 'CISCOTHEBOSS'.")
+parser.add_argument("-pa", "--password", dest="PASSWORD", default="ANG3LTHEBOSS", help="The password to generate the key to encrypt and decrypt the data. The default password is 'ANG3LTHEBOSS'.")
 
 init()
 

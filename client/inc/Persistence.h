@@ -6,17 +6,19 @@
 using namespace std;
 
 class Persistence
-{//Change the registry key according to the user's permission.
+{
+    /*
+    Changes the registry key according to the user's permission.
+    */
     public:
-    
-        Persistence();
-        Persistence(bool is_admin, wstring path_prog);
-        INT customPersi(); //Comming soon
-        
-        VOID main();
-               
+        Persistence(); //Default constructor.
+        Persistence(bool is_admin, wstring path_prog); //Constructor with parameters.
+        INT customPersi(); //Function to customize persistence (coming soon).
+
+        VOID main(); //Main function.
+
     private:
-        BOOL a_is_admin; //Declaration attribut of constuctor.
-        wstring a_path_prog;
+        BOOL a_is_admin; //Whether the user is an admin or not.
+        wstring a_path_prog; //The path of the program.
 };
 #endif
